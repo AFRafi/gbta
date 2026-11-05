@@ -9,9 +9,6 @@
 
         :root {
             --env-base: #e6d7c3;
-            --env-dark: #ccb79e;
-            --env-inner: #c2aa8f;
-            --env-border: #bca487;
             --gold: #c8a84e;
         }
 
@@ -21,94 +18,69 @@
             width: 100%;
             height: 100%;
             overflow-x: hidden;
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
             background: #faf8f4;
             font-family: 'Cormorant Garamond', serif;
         }
 
         /* ===== CONTAINER ===== */
-        .container {
+        .stage {
             position: relative;
             width: 100vw;
             height: 100vh;
-            display: grid;
-            place-items: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
         }
 
-        /* ===== ENVELOPE WRAPPER ===== */
-        .envelope-scene {
-            grid-area: 1 / 1;
+        /* ===== MAIN INTERACTIVE WRAPPER ===== */
+        .invite-wrapper {
             position: relative;
+            width: min(440px, 88vw);
+            height: min(280px, 56vw);
             cursor: pointer;
-            width: min(440px, 86vw);
-            height: min(280px, 55vw);
             perspective: 1200px;
-            filter: drop-shadow(0 15px 35px rgba(0,0,0,0.12));
-            transition: filter 0.3s ease, transform 0.4s ease, opacity 0.6s ease;
-            z-index: 5;
         }
 
-        .envelope-scene:hover:not(.opened) {
-            transform: scale(1.02);
-            filter: drop-shadow(0 20px 45px rgba(0,0,0,0.18));
-        }
-
-        .envelope-scene.opened {
+        .invite-wrapper.opened {
             cursor: default;
         }
 
-        .envelope-scene.fade-out {
-            opacity: 0;
-            transform: scale(0.9) translateY(20px);
-            pointer-events: none;
-            display: none;
-        }
-
-        /* The Envelope Base Box */
-        .envelope {
-            position: relative;
+        /* ===== ENVELOPE ===== */
+        .envelope-box {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
             background: var(--env-base);
-            border-radius: 0 0 6px 6px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+            transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+            z-index: 5;
         }
 
-        /* Deep Pocket Background when flap opens */
-        .env-inner-pocket {
+        .invite-wrapper:hover:not(.opened) .envelope-box {
+            transform: scale(1.02);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+        }
+
+        /* STEP 3: Envelope glides downwards */
+        .invite-wrapper.opened .envelope-box {
+            transform: translateY(180px) scale(0.92);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.18);
+        }
+
+        /* Inside Pocket */
+        .env-pocket-bg {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, #bfa88d 0%, #cebba3 100%);
-            border-radius: 0 0 6px 6px;
+            background: linear-gradient(180deg, #baa084 0%, #cebba3 100%);
+            border-radius: 0 0 8px 8px;
             z-index: 1;
         }
 
-        /* Peeking Card Inside before open */
-        .env-card-inside {
-            position: absolute;
-            top: 15%;
-            left: 5%;
-            width: 90%;
-            height: 75%;
-            background: #ffffff;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-            z-index: 2;
-            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .envelope-scene.opened .env-card-inside {
-            transform: translateY(-20px);
-        }
-
-        /* Left Flap */
-        .env-side-left {
+        /* Left Side Flap */
+        .env-flap-left {
             position: absolute;
             top: 0;
             left: 0;
@@ -116,12 +88,12 @@
             height: 100%;
             background: linear-gradient(135deg, #ebdcc9 0%, #d8c4ad 100%);
             clip-path: polygon(0 0, 50% 50%, 0 100%);
-            z-index: 3;
+            z-index: 10;
             filter: drop-shadow(2px 0 3px rgba(0,0,0,0.04));
         }
 
-        /* Right Flap */
-        .env-side-right {
+        /* Right Side Flap */
+        .env-flap-right {
             position: absolute;
             top: 0;
             right: 0;
@@ -129,12 +101,12 @@
             height: 100%;
             background: linear-gradient(225deg, #e4d3be 0%, #d0bda5 100%);
             clip-path: polygon(100% 0, 50% 50%, 100% 100%);
-            z-index: 3;
+            z-index: 10;
             filter: drop-shadow(-2px 0 3px rgba(0,0,0,0.04));
         }
 
-        /* Bottom Solid Triangle Flap */
-        .env-bottom {
+        /* Bottom Triangle Flap */
+        .env-flap-bottom {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -142,13 +114,13 @@
             height: 100%;
             background: linear-gradient(0deg, #cfbba3 0%, #decbb4 50%, #eadccb 100%);
             clip-path: polygon(0 100%, 50% 48%, 100% 100%);
-            border-radius: 0 0 6px 6px;
-            z-index: 4;
+            border-radius: 0 0 8px 8px;
+            z-index: 11;
             filter: drop-shadow(0 -3px 4px rgba(0,0,0,0.05));
         }
 
-        /* Top Opening Flap (Hinged at top 0, rotates 180deg upwards) */
-        .env-top-flap {
+        /* Top Opening Flap (Hinged at top) */
+        .env-flap-top {
             position: absolute;
             top: 0;
             left: 0;
@@ -158,28 +130,28 @@
             background: linear-gradient(180deg, #f5e9d9 0%, #ebdcc8 55%, #dfceb8 100%);
             transform-origin: top center;
             transform: rotateX(0deg);
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.6s;
-            z-index: 5;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.5s;
+            z-index: 12;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
         }
 
-        /* Flap inside texture when opened upward */
-        .env-top-flap::after {
+        .env-flap-top::after {
             content: '';
             position: absolute;
             inset: 0;
             background: linear-gradient(0deg, #b89f82 0%, #ccb89e 100%);
             opacity: 0;
-            transition: opacity 0.1s linear 0.6s;
+            transition: opacity 0.1s linear 0.5s;
         }
 
-        .envelope-scene.opened .env-top-flap {
+        /* Flap opened state */
+        .invite-wrapper.opened .env-flap-top {
             transform: rotateX(180deg);
             z-index: 1;
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
         }
 
-        .envelope-scene.opened .env-top-flap::after {
+        .invite-wrapper.opened .env-flap-top::after {
             opacity: 1;
         }
 
@@ -191,7 +163,7 @@
             transform: translate(-50%, -50%);
             width: 52px;
             height: 52px;
-            z-index: 6;
+            z-index: 13;
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -217,9 +189,71 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
 
-        .envelope-scene.opened .wax-seal {
+        .invite-wrapper.opened .wax-seal {
             opacity: 0;
             transform: translate(-50%, -50%) scale(0) rotate(180deg);
+        }
+
+        /* ===== INVITATION CARD (INSIDE POCKET INITIALLY) ===== */
+        .card-container {
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            max-height: 85vh;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(200, 168, 78, 0.35);
+            overflow: hidden;
+            z-index: 3; /* Placed between pocket-bg (1) and front flaps (10) */
+            pointer-events: none;
+            transform: translateY(0) scale(0.96);
+            transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1), z-index 0s linear 0.7s, width 1.2s ease, left 1.2s ease, box-shadow 1.2s ease;
+        }
+
+        /* STEP 2: Card emerges smoothly out of envelope and moves upwards */
+        .invite-wrapper.opened .card-container {
+            transform: translateY(-160px) scale(1.08);
+            z-index: 15; /* Rises over everything! */
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(200, 168, 78, 0.4);
+            pointer-events: auto;
+        }
+
+        .card-container img {
+            width: 100%;
+            height: auto;
+            max-height: 85vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        .card-frame {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(200, 168, 78, 0.35);
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Shine sweep on card once emerged */
+        .card-shine {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.2) 48%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0.2) 52%, transparent 65%);
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .invite-wrapper.opened .card-shine {
+            animation: shineOnce 2s ease 1.6s forwards;
+        }
+
+        @keyframes shineOnce {
+            0% { opacity: 1; transform: translateX(-120%); }
+            45% { opacity: 1; transform: translateX(120%); }
+            100% { opacity: 0; transform: translateX(120%); }
         }
 
         /* Tap Hint */
@@ -244,126 +278,56 @@
             50% { opacity: 0.95; }
         }
 
-        .envelope-scene.opened .tap-hint {
+        .invite-wrapper.opened .tap-hint {
             opacity: 0;
             pointer-events: none;
-        }
-
-        /* ===== INVITATION CARD (TOP LAYER) ===== */
-        .card-container {
-            grid-area: 1 / 1;
-            opacity: 0;
-            transform: scale(0.92);
-            pointer-events: none;
-            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-            z-index: 10;
-        }
-
-        .card-container.show {
-            opacity: 1;
-            transform: scale(1);
-            pointer-events: auto;
-        }
-
-        .invitation-card {
-            width: min(480px, 92vw);
-            max-height: 88vh;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            background: #ffffff;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(200, 168, 78, 0.35);
-        }
-
-        .invitation-card img {
-            width: 100%;
-            height: auto;
-            max-height: 88vh;
-            object-fit: contain;
-            display: block;
-        }
-
-        /* Elegant Thin Gold Border */
-        .card-frame {
-            position: absolute;
-            inset: 0;
-            border: 2px solid rgba(200, 168, 78, 0.35);
-            border-radius: 12px;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        /* Shine sweep on card */
-        .card-shine {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.2) 48%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0.2) 52%, transparent 65%);
-            z-index: 3;
-            pointer-events: none;
-            opacity: 0;
-        }
-
-        .card-container.show .card-shine {
-            animation: shineOnce 2.2s ease 0.4s forwards;
-        }
-
-        @keyframes shineOnce {
-            0% { opacity: 1; transform: translateX(-120%); }
-            45% { opacity: 1; transform: translateX(120%); }
-            100% { opacity: 0; transform: translateX(120%); }
         }
 
         @media (max-width: 480px) {
-            .envelope-scene { width: 88vw; height: 58vw; }
-            .invitation-card { width: 92vw; }
+            .invite-wrapper { width: 88vw; height: 58vw; }
+            .invite-wrapper.opened .card-container { transform: translateY(-130px) scale(1.04); }
+            .invite-wrapper.opened .envelope-box { transform: translateY(140px) scale(0.92); }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Envelope Scene -->
-        <div class="envelope-scene" id="envelope">
-            <div class="envelope">
-                <div class="env-inner-pocket"></div>
-                <div class="env-card-inside"></div>
-                <div class="env-side-left"></div>
-                <div class="env-side-right"></div>
-                <div class="env-bottom"></div>
-                <div class="env-top-flap"></div>
+    <div class="stage">
+        <!-- Interactive Invitation Component -->
+        <div class="invite-wrapper" id="inviteWrapper">
+            
+            <!-- Envelope Box -->
+            <div class="envelope-box">
+                <div class="env-pocket-bg"></div>
+                <div class="env-flap-left"></div>
+                <div class="env-flap-right"></div>
+                <div class="env-flap-bottom"></div>
+                <div class="env-flap-top"></div>
                 <div class="wax-seal">
                     <div class="wax-seal-body"></div>
                 </div>
             </div>
-            <div class="tap-hint">Tap to Open</div>
-        </div>
 
-        <!-- Invitation Card (Opens in place) -->
-        <div class="card-container" id="cardContainer">
-            <div class="invitation-card">
+            <!-- Actual Invitation Card (inside pocket initially) -->
+            <div class="card-container" id="cardContainer">
                 <div class="card-frame"></div>
                 <div class="card-shine"></div>
                 <img src="INVITATION-CARD.svg" alt="GBTA Invitation Card" />
             </div>
+
+            <div class="tap-hint">Tap to Open</div>
         </div>
     </div>
 
     <script>
         (function () {
+            const wrapper = document.getElementById('inviteWrapper');
             let opened = false;
 
-            document.getElementById('envelope').addEventListener('click', function () {
+            wrapper.addEventListener('click', function () {
                 if (opened) return;
                 opened = true;
-
-                // Step 1: Open the flap animatedly upwards
-                this.classList.add('opened');
-
-                // Step 2: Show sample open envelope state, then reveal card
-                setTimeout(() => {
-                    this.classList.add('fade-out');
-                    document.getElementById('cardContainer').classList.add('show');
-                }, 1400);
+                wrapper.classList.add('opened');
             });
         })();
     </script>
