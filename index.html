@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GBTA — Grand Opening Invitation</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Playfair+Display:wght@700;900&display=swap');
 
         :root {
-            /* Premium Burgundy & Gold Palette from sample */
-            --env-red-dark: #6e0d19;
-            --env-red-base: #8e1524;
-            --env-red-bright: #aa1b2e;
-            --env-inner: #500811;
-            --gold: #d4af37;
-            --gold-light: #f3e5ab;
+            --gold: #c8a84e;
+            --gold-light: #e8d48b;
+            --gold-dark: #a07c2a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,192 +19,175 @@
             width: 100%;
             min-height: 100vh;
             overflow-x: hidden;
-            background: #faf7f2;
-            font-family: 'Cormorant Garamond', serif;
         }
 
-        /* ===== CONTAINER ===== */
-        .wrapper {
-            position: relative;
-            width: 100vw;
-            min-height: 100vh;
+        body {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px 15px;
+            background: #faf8f4;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* ===== CONTAINER (CENTERED GRID STACK) ===== */
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            place-items: center;
             overflow: hidden;
         }
 
-        /* ===== ENVELOPE STAGE ===== */
-        .envelope-box {
+        /* ===== ENVELOPE WRAPPER ===== */
+        .envelope-scene {
+            grid-area: 1 / 1;
             position: relative;
-            width: min(500px, 92vw);
-            height: min(330px, 60vw);
             cursor: pointer;
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.25));
-            transition: transform 0.4s ease, filter 0.4s ease;
+            transform: scale(0.95);
+            opacity: 0;
+            animation: envelopeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+            filter: drop-shadow(0 15px 35px rgba(0,0,0,0.12));
+            transition: filter 0.3s ease, transform 0.3s ease;
+            z-index: 5;
         }
 
-        .envelope-box:hover:not(.opened) {
-            transform: translateY(-5px) scale(1.01);
-            filter: drop-shadow(0 28px 50px rgba(0,0,0,0.32));
+        .envelope-scene:hover:not(.opened) {
+            transform: scale(0.98);
+            filter: drop-shadow(0 20px 45px rgba(0,0,0,0.18));
         }
 
-        /* 1. Inside Back of Envelope */
-        .env-back-plate {
+        @keyframes envelopeIn {
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .envelope-scene.opened {
+            cursor: default;
+        }
+
+        .envelope-scene.fade-out {
+            opacity: 0;
+            transform: scale(0.85);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            pointer-events: none;
+            display: none;
+        }
+
+        /* ===== SOLID PREMIUM ENVELOPE ===== */
+        .envelope {
+            position: relative;
+            width: min(440px, 86vw);
+            height: min(280px, 55vw);
+            background: #e5d7c3;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Envelope Inner Pocket Background */
+        .env-inner-pocket {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, #42060e 0%, var(--env-inner) 100%);
-            border-radius: 12px;
+            background: linear-gradient(180deg, #d8c7b0 0%, #ecdcc8 100%);
             z-index: 1;
         }
 
-        /* 2. Top Flap (Opens upwards like the sample!) */
-        .env-flap-hinge {
+        /* Side Flaps (Left & Right) */
+        .env-side-left {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            transform-origin: top center;
-            transform: rotateX(0deg);
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s;
-            z-index: 6;
-            transform-style: preserve-3d;
-        }
-
-        /* Front side of flap (when closed) */
-        .flap-front {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, var(--env-red-bright) 0%, var(--env-red-base) 60%, var(--env-red-dark) 100%);
-            clip-path: polygon(0 0, 100% 0, 50% 55%);
-            backface-visibility: hidden;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-        }
-
-        /* Back side of flap (interior visible when opened) */
-        .flap-back {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(0deg, #5c0a14 0%, #3d050c 100%);
-            clip-path: polygon(0 0, 100% 0, 50% 55%);
-            transform: rotateX(180deg);
-            backface-visibility: hidden;
-        }
-
-        /* Flap opened state */
-        .envelope-box.opened .env-flap-hinge {
-            transform: rotateX(180deg);
-            z-index: 1;
-        }
-
-        /* 3. The actual Invitation Card inside the envelope */
-        .card-paper {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%) translateY(0);
-            width: 92%;
-            max-width: 460px;
-            background: #ffffff;
-            border-radius: 10px;
-            overflow: hidden;
-            z-index: 3;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.6s, 
-                        box-shadow 1.2s ease 0.6s,
-                        z-index 0s linear 1.2s;
-            line-height: 0;
-        }
-
-        .card-paper img {
-            width: 100%;
-            height: auto;
-            max-height: 82vh;
-            object-fit: contain;
-            display: block;
-            border-radius: 10px;
-        }
-
-        /* Card lifts up and centers proudly */
-        .envelope-box.opened .card-paper {
-            transform: translateX(-50%) translateY(-35%);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(212,175,55,0.4);
-            z-index: 15;
-            cursor: default;
-        }
-
-        /* Mobile adjust for lift height */
-        @media (max-width: 600px) {
-            .envelope-box.opened .card-paper {
-                transform: translateX(-50%) translateY(-28%);
-            }
-        }
-
-        /* 4. Envelope Front Folds (Side & Bottom) */
-        .env-side-left {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, var(--env-red-base) 0%, var(--env-red-dark) 100%);
-            clip-path: polygon(0 0, 50% 50%, 0 100%);
-            z-index: 4;
-            box-shadow: 3px 0 12px rgba(0,0,0,0.18);
+            background: linear-gradient(135deg, #e4d5c1 0%, #d8c6b0 100%);
+            clip-path: polygon(0 0, 52% 50%, 0 100%);
+            z-index: 2;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.04);
         }
 
         .env-side-right {
             position: absolute;
-            inset: 0;
-            background: linear-gradient(225deg, var(--env-red-base) 0%, var(--env-red-dark) 100%);
-            clip-path: polygon(100% 0, 50% 50%, 100% 100%);
-            z-index: 4;
-            box-shadow: -3px 0 12px rgba(0,0,0,0.18);
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(225deg, #dfcfba 0%, #d3c0aa 100%);
+            clip-path: polygon(100% 0, 48% 50%, 100% 100%);
+            z-index: 2;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.04);
         }
 
-        .env-bottom-face {
+        /* Bottom Solid Flap (Completely Fills Bottom Half) */
+        .env-bottom {
             position: absolute;
-            inset: 0;
-            background: linear-gradient(0deg, #5b0a13 0%, var(--env-red-dark) 45%, var(--env-red-base) 100%);
-            clip-path: polygon(0 100%, 50% 48%, 100% 100%);
-            z-index: 5;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.22);
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, #d3c0a8 0%, #ddccb5 50%, #e6d7c2 100%);
+            clip-path: polygon(0 100%, 50% 46%, 100% 100%);
+            z-index: 3;
+            box-shadow: 0 -3px 12px rgba(0,0,0,0.06);
         }
 
-        /* 5. Gold Luxury Seal */
+        /* Top Opening Flap */
+        .env-top-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(0 0, 100% 0, 50% 55%);
+            background: linear-gradient(180deg, #f0e3d2 0%, #e8d9c5 55%, #dfceb8 100%);
+            transform-origin: top center;
+            transform: rotateX(0deg);
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.6s;
+            z-index: 4;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .envelope-scene.opened .env-top-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
+        }
+
+        /* Wax Seal */
         .wax-seal {
             position: absolute;
-            top: 55%;
+            top: 54%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 54px;
-            height: 54px;
-            z-index: 7;
+            width: 52px;
+            height: 52px;
+            z-index: 6;
             transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .wax-seal-body {
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 35% 35%, #ffd700, #c89d28 60%, #85610e 100%);
+            background: radial-gradient(circle at 35% 35%, #d93d3d, #b31f1f 55%, #801212 100%);
             border-radius: 50%;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.45),
-                        inset 0 -2px 5px rgba(0,0,0,0.4),
-                        inset 0 2px 5px rgba(255,255,255,0.4);
+            box-shadow: 0 4px 15px rgba(130, 20, 20, 0.45),
+                        inset 0 -2px 5px rgba(0, 0, 0, 0.3),
+                        inset 0 2px 5px rgba(255, 255, 255, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
 
         .wax-seal-body::before {
             content: 'G';
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 900;
-            color: #463004;
-            text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+            color: rgba(255, 255, 255, 0.88);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
 
-        .envelope-box.opened .wax-seal {
+        .envelope-scene.opened .wax-seal {
             opacity: 0;
             transform: translate(-50%, -50%) scale(0) rotate(180deg);
         }
@@ -220,69 +199,140 @@
             left: 50%;
             transform: translateX(-50%);
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--env-red-base);
-            letter-spacing: 4px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #8c6a2b;
+            letter-spacing: 3px;
             text-transform: uppercase;
             white-space: nowrap;
-            animation: hintPulse 2s ease-in-out infinite;
+            animation: hintPulse 2.2s ease-in-out infinite;
             transition: opacity 0.4s ease;
         }
 
         @keyframes hintPulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
+            0%, 100% { opacity: 0.45; }
+            50% { opacity: 0.95; }
         }
 
-        .envelope-box.opened .tap-hint {
+        .envelope-scene.opened .tap-hint {
             opacity: 0;
             pointer-events: none;
+        }
+
+        /* ===== INVITATION CARD (TOP LAYER) ===== */
+        .card-container {
+            grid-area: 1 / 1;
+            opacity: 0;
+            transform: scale(0.92);
+            pointer-events: none;
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            z-index: 10;
+        }
+
+        .card-container.show {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .invitation-card {
+            width: min(480px, 92vw);
+            max-height: 88vh;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            background: #ffffff;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(200, 168, 78, 0.35);
+        }
+
+        .invitation-card img {
+            width: 100%;
+            height: auto;
+            max-height: 88vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Elegant Thin Gold Border */
+        .card-frame {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(200, 168, 78, 0.35);
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Shine sweep on card */
+        .card-shine {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.2) 48%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0.2) 52%, transparent 65%);
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .card-container.show .card-shine {
+            animation: shineOnce 2.2s ease 0.4s forwards;
+        }
+
+        @keyframes shineOnce {
+            0% { opacity: 1; transform: translateX(-120%); }
+            45% { opacity: 1; transform: translateX(120%); }
+            100% { opacity: 0; transform: translateX(120%); }
+        }
+
+        @media (max-width: 480px) {
+            .envelope { width: 88vw; height: 58vw; }
+            .invitation-card { width: 92vw; }
         }
     </style>
 </head>
 <body>
 
-    <div class="wrapper">
-        <div class="envelope-box" id="envelope">
-            
-            <!-- 1. Deep Inside Back Plate -->
-            <div class="env-back-plate"></div>
-
-            <!-- 2. Top Flap with Real 3D Opening (Upwards Matha) -->
-            <div class="env-flap-hinge">
-                <div class="flap-front"></div>
-                <div class="flap-back"></div>
+    <div class="container">
+        <!-- Envelope Scene -->
+        <div class="envelope-scene" id="envelope">
+            <div class="envelope">
+                <div class="env-inner-pocket"></div>
+                <div class="env-side-left"></div>
+                <div class="env-side-right"></div>
+                <div class="env-bottom"></div>
+                <div class="env-top-flap"></div>
+                <div class="wax-seal">
+                    <div class="wax-seal-body"></div>
+                </div>
             </div>
+            <div class="tap-hint">Tap to Open</div>
+        </div>
 
-            <!-- 3. Real SVG Card nestled inside -->
-            <div class="card-paper">
+        <!-- Invitation Card (Opens directly in place) -->
+        <div class="card-container" id="cardContainer">
+            <div class="invitation-card">
+                <div class="card-frame"></div>
+                <div class="card-shine"></div>
                 <img src="INVITATION-CARD.svg" alt="GBTA Invitation Card" />
             </div>
-
-            <!-- 4. Front Fold Layers (Covers card initially) -->
-            <div class="env-side-left"></div>
-            <div class="env-side-right"></div>
-            <div class="env-bottom-face"></div>
-
-            <!-- 5. Gold Monogram Wax Seal -->
-            <div class="wax-seal">
-                <div class="wax-seal-body"></div>
-            </div>
-
-            <div class="tap-hint">Tap to Open</div>
         </div>
     </div>
 
     <script>
         (function () {
             let opened = false;
-            const env = document.getElementById('envelope');
 
-            env.addEventListener('click', function () {
+            document.getElementById('envelope').addEventListener('click', function () {
                 if (opened) return;
                 opened = true;
+
+                // Step 1: Open the flap
                 this.classList.add('opened');
+
+                // Step 2: Show card and hide envelope
+                setTimeout(() => {
+                    this.classList.add('fade-out');
+                    document.getElementById('cardContainer').classList.add('show');
+                }, 1200);
             });
         })();
     </script>
