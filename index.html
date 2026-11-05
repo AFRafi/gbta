@@ -70,7 +70,7 @@
             box-shadow: 0 25px 55px rgba(0,0,0,0.16);
         }
 
-        /* Pocket Background */
+        /* Deep Pocket Interior Background */
         .env-pocket-bg {
             position: absolute;
             inset: 0;
@@ -79,48 +79,10 @@
             z-index: 1;
         }
 
-        /* ===== ENVELOPE POCKET CLIPPER (CARD SLIDES OUT OF THIS) ===== */
-        .env-pocket-clipper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 2;
-            border-radius: 0 0 8px 8px;
-            pointer-events: none;
-        }
-
-        /* Initially, card is small, tucked deep inside the envelope pocket clipper */
-        .card-inside {
-            position: absolute;
-            bottom: 0;
-            left: 5%;
-            width: 90%;
-            height: 90%;
-            opacity: 1;
-            transform: translateY(0);
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, opacity 0.2s linear 1.2s;
-        }
-
-        .card-inside img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px 8px 0 0;
-        }
-
-        /* When opened: card slides up out of the pocket */
-        .invite-wrapper.opened .card-inside {
-            transform: translateY(-90%);
-            opacity: 0;
-        }
-
-        /* ===== FULL INVITATION CARD (EXPANDS OUTSIDE) ===== */
+        /* ===== REALISTIC CARD EMERGING DIRECTLY FROM INSIDE ===== */
         .card-container {
             position: absolute;
-            bottom: 10px;
+            bottom: 6px;
             left: 5%;
             width: 90%;
             max-height: 56vh;
@@ -128,22 +90,24 @@
             background: #ffffff;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(200, 168, 78, 0.35);
             overflow: hidden;
-            z-index: 1;
             pointer-events: none;
+
+            /* INITIALLY: Tucked fully inside the pocket (behind front folds z:10, in front of back flap z:1) */
+            z-index: 3;
             opacity: 0;
-            transform: translateY(40px) scale(0.65);
+            transform: translateY(30px) scale(0.88);
             transition: 
-                opacity 0.4s ease 0.9s,
-                transform 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.9s, 
-                box-shadow 1.2s ease 0.9s,
+                opacity 0.4s ease 0.35s,
+                transform 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s, 
+                box-shadow 1.4s ease 0.4s,
                 z-index 0s linear 1s;
         }
 
-        /* Once pulled out of the envelope, it grows big and stays centered in full glory */
+        /* WHEN OPENED: Pulls upward in front of the top flap, clears the pocket, and grows big into position */
         .invite-wrapper.opened .card-container {
             opacity: 1;
             transform: translateY(-40px) scale(1);
-            z-index: 25;
+            z-index: 25; /* Rises in front of the entire envelope! */
             box-shadow: 0 30px 75px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(200, 168, 78, 0.45);
             pointer-events: auto;
         }
@@ -176,7 +140,7 @@
         }
 
         .invite-wrapper.opened .card-shine {
-            animation: shineOnce 2s ease 2.2s forwards;
+            animation: shineOnce 2s ease 2s forwards;
         }
 
         @keyframes shineOnce {
@@ -185,7 +149,7 @@
             100% { opacity: 0; transform: translateX(120%); }
         }
 
-        /* ===== ENVELOPE FRONT FLAPS ===== */
+        /* ===== ENVELOPE FRONT FOLDS ===== */
         .env-flap-left {
             position: absolute;
             top: 0;
@@ -223,7 +187,7 @@
             filter: drop-shadow(0 -3px 4px rgba(0,0,0,0.05));
         }
 
-        /* Top Opening Flap */
+        /* Top Opening Flap (Hinged at top) */
         .env-flap-top {
             position: absolute;
             top: 0;
@@ -234,7 +198,7 @@
             background: linear-gradient(180deg, #f5e9d9 0%, #ebdcc8 55%, #dfceb8 100%);
             transform-origin: top center;
             transform: rotateX(0deg);
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.5s;
+            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.45s;
             z-index: 12;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
         }
@@ -245,13 +209,14 @@
             inset: 0;
             background: linear-gradient(0deg, #b89f82 0%, #ccb89e 100%);
             opacity: 0;
-            transition: opacity 0.1s linear 0.5s;
+            transition: opacity 0.1s linear 0.45s;
         }
 
+        /* Once opened: Flap folds upward and moves BEHIND everything (z-index: 1) */
         .invite-wrapper.opened .env-flap-top {
             transform: rotateX(180deg);
             z-index: 1;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
+            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
         }
 
         .invite-wrapper.opened .env-flap-top::after {
@@ -344,14 +309,6 @@
             <!-- Envelope Box (Never hides, stays below) -->
             <div class="envelope-box">
                 <div class="env-pocket-bg"></div>
-                
-                <!-- Pocket clipper: small card emerges from the interior -->
-                <div class="env-pocket-clipper">
-                    <div class="card-inside">
-                        <img src="INVITATION-CARD.jpeg" alt="Tucked card" />
-                    </div>
-                </div>
-
                 <div class="env-flap-left"></div>
                 <div class="env-flap-right"></div>
                 <div class="env-flap-bottom"></div>
@@ -365,7 +322,7 @@
                 </div>
             </div>
 
-            <!-- Full Invitation Card: emerges, grows big and stays fully visible -->
+            <!-- Single Real Card: nestled inside pocket, glides out above the flap into place -->
             <div class="card-container" id="cardContainer">
                 <div class="card-frame"></div>
                 <div class="card-shine"></div>
