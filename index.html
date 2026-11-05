@@ -55,7 +55,7 @@
             background: var(--env-base);
             border-radius: 0 0 8px 8px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.12);
-            transition: transform 1.6s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease;
+            transition: transform 1.8s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease;
             z-index: 5;
         }
 
@@ -79,10 +79,48 @@
             z-index: 1;
         }
 
-        /* ===== INVITATION CARD (INSIDE ENVELOPE POCKET) ===== */
+        /* ===== ENVELOPE POCKET CLIPPER (CARD SLIDES OUT OF THIS) ===== */
+        .env-pocket-clipper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 2;
+            border-radius: 0 0 8px 8px;
+            pointer-events: none;
+        }
+
+        /* Initially, card is small, tucked deep inside the envelope pocket clipper */
+        .card-inside {
+            position: absolute;
+            bottom: 0;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            opacity: 1;
+            transform: translateY(0);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, opacity 0.2s linear 1.2s;
+        }
+
+        .card-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+
+        /* When opened: card slides up out of the pocket */
+        .invite-wrapper.opened .card-inside {
+            transform: translateY(-90%);
+            opacity: 0;
+        }
+
+        /* ===== FULL INVITATION CARD (EXPANDS OUTSIDE) ===== */
         .card-container {
             position: absolute;
-            bottom: 6px;
+            bottom: 10px;
             left: 5%;
             width: 90%;
             max-height: 56vh;
@@ -90,24 +128,22 @@
             background: #ffffff;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(200, 168, 78, 0.35);
             overflow: hidden;
-            z-index: 2; /* Initially inside: in front of pocket-bg(1), behind front flaps(10) */
+            z-index: 1;
             pointer-events: none;
-
-            /* COMPLETELY HIDDEN INITIALLY INSIDE ENVELOPE */
             opacity: 0;
-            transform: translateY(40px) scale(0.85);
+            transform: translateY(40px) scale(0.65);
             transition: 
-                opacity 0.6s ease 0.4s, 
-                transform 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s, 
-                box-shadow 1.4s ease 0.5s,
-                z-index 0s linear 1.1s;
+                opacity 0.4s ease 0.9s,
+                transform 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.9s, 
+                box-shadow 1.2s ease 0.9s,
+                z-index 0s linear 1s;
         }
 
-        /* ON OPEN: Card smoothly rises UP out of envelope, perfectly framed with safe headroom */
+        /* Once pulled out of the envelope, it grows big and stays centered in full glory */
         .invite-wrapper.opened .card-container {
             opacity: 1;
             transform: translateY(-40px) scale(1);
-            z-index: 20; /* Climbs above envelope flap and folds once pulled out */
+            z-index: 25;
             box-shadow: 0 30px 75px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(200, 168, 78, 0.45);
             pointer-events: auto;
         }
@@ -140,7 +176,7 @@
         }
 
         .invite-wrapper.opened .card-shine {
-            animation: shineOnce 2s ease 1.8s forwards;
+            animation: shineOnce 2s ease 2.2s forwards;
         }
 
         @keyframes shineOnce {
@@ -222,14 +258,14 @@
             opacity: 1;
         }
 
-        /* Wax Seal */
+        /* ===== WAX SEAL WITH LOGO.PNG ===== */
         .wax-seal {
             position: absolute;
             top: 52%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 52px;
-            height: 52px;
+            width: 54px;
+            height: 54px;
             z-index: 13;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -237,23 +273,25 @@
         .wax-seal-body {
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 35% 35%, #d93d3d, #b31f1f 55%, #801212 100%);
+            background: radial-gradient(circle at 35% 35%, #ffffff, #faf6ee 65%, #ebdcc8 100%);
             border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(130, 20, 20, 0.45),
-                        inset 0 -2px 5px rgba(0, 0, 0, 0.3),
-                        inset 0 2px 5px rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.16),
+                        0 0 0 2px rgba(200, 168, 78, 0.4),
+                        inset 0 -2px 5px rgba(0, 0, 0, 0.08),
+                        inset 0 2px 5px rgba(255, 255, 255, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 7px;
+            overflow: hidden;
         }
 
-        .wax-seal-body::before {
-            content: 'G';
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.88);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        .wax-seal-body img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
         }
 
         .invite-wrapper.opened .wax-seal {
@@ -306,20 +344,32 @@
             <!-- Envelope Box (Never hides, stays below) -->
             <div class="envelope-box">
                 <div class="env-pocket-bg"></div>
+                
+                <!-- Pocket clipper: small card emerges from the interior -->
+                <div class="env-pocket-clipper">
+                    <div class="card-inside">
+                        <img src="INVITATION-CARD.jpeg" alt="Tucked card" />
+                    </div>
+                </div>
+
                 <div class="env-flap-left"></div>
                 <div class="env-flap-right"></div>
                 <div class="env-flap-bottom"></div>
                 <div class="env-flap-top"></div>
+
+                <!-- Seal with logo.png -->
                 <div class="wax-seal">
-                    <div class="wax-seal-body"></div>
+                    <div class="wax-seal-body">
+                        <img src="logo.png" alt="GBTA Logo" />
+                    </div>
                 </div>
             </div>
 
-            <!-- Actual Invitation Card (Hidden initially, rises up from inside) -->
+            <!-- Full Invitation Card: emerges, grows big and stays fully visible -->
             <div class="card-container" id="cardContainer">
                 <div class="card-frame"></div>
                 <div class="card-shine"></div>
-                <img src="INVITATION-CARD.svg" alt="GBTA Invitation Card" />
+                <img src="INVITATION-CARD.jpeg" alt="GBTA Invitation Card" />
             </div>
 
             <div class="tap-hint">Tap to Open</div>
