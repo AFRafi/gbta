@@ -131,18 +131,21 @@
             /* Sits behind front triangle folds (z:10) and in front of pocket bg (z:1) & open flap (z:2) */
             z-index: 5;
 
-            /* INITIALLY: Completely deep inside the envelope pocket */
-            transform: translateY(60px) scale(0.92);
+            /* INITIALLY: COMPLETELY HIDDEN (OPACITY 0 + SITTING INSIDE) */
+            opacity: 0;
+            transform: translateY(30px) scale(0.92);
             transition: 
+                opacity 0.4s ease 0.35s,
                 transform 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s, 
                 box-shadow 1.4s ease 0.35s,
                 z-index 0s linear 1.2s;
         }
 
-        /* ON CLICK: Card rises out of the pocket opening, in front of top flap, behind front folds initially */
+        /* ON CLICK: Once flap opens, card becomes visible and smoothly emerges from the pocket */
         .invite-wrapper.opened .card-container {
+            opacity: 1;
             transform: translateY(-400px) scale(1.18);
-            z-index: 30; /* Once it emerges high up, it can overlay if needed */
+            z-index: 30; /* Once it emerges high up, overlays cleanly */
             box-shadow: 0 30px 75px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(200, 168, 78, 0.45);
             pointer-events: auto;
         }
@@ -313,7 +316,7 @@
                 <!-- Layer 2: Top Opening Flap -->
                 <div class="env-flap-top"></div>
 
-                <!-- Layer 3: REAL CARD NESTLED DIRECTLY INSIDE THE POCKET -->
+                <!-- Layer 3: REAL CARD NESTLED DIRECTLY INSIDE THE POCKET (HIDDEN INITIALLY) -->
                 <div class="card-container" id="cardContainer">
                     <div class="card-frame"></div>
                     <div class="card-shine"></div>
