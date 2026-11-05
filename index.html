@@ -8,16 +8,18 @@
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Playfair+Display:wght@700;900&display=swap');
 
         :root {
+            --env-base: #e6d7c3;
+            --env-dark: #ccb79e;
+            --env-inner: #c2aa8f;
+            --env-border: #bca487;
             --gold: #c8a84e;
-            --gold-light: #e8d48b;
-            --gold-dark: #a07c2a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html, body {
             width: 100%;
-            min-height: 100vh;
+            height: 100%;
             overflow-x: hidden;
         }
 
@@ -29,7 +31,7 @@
             font-family: 'Cormorant Garamond', serif;
         }
 
-        /* ===== CONTAINER (CENTERED GRID STACK) ===== */
+        /* ===== CONTAINER ===== */
         .container {
             position: relative;
             width: 100vw;
@@ -44,21 +46,17 @@
             grid-area: 1 / 1;
             position: relative;
             cursor: pointer;
-            transform: scale(0.95);
-            opacity: 0;
-            animation: envelopeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+            width: min(440px, 86vw);
+            height: min(280px, 55vw);
+            perspective: 1200px;
             filter: drop-shadow(0 15px 35px rgba(0,0,0,0.12));
-            transition: filter 0.3s ease, transform 0.3s ease;
+            transition: filter 0.3s ease, transform 0.4s ease, opacity 0.6s ease;
             z-index: 5;
         }
 
         .envelope-scene:hover:not(.opened) {
-            transform: scale(0.98);
+            transform: scale(1.02);
             filter: drop-shadow(0 20px 45px rgba(0,0,0,0.18));
-        }
-
-        @keyframes envelopeIn {
-            to { transform: scale(1); opacity: 1; }
         }
 
         .envelope-scene.opened {
@@ -67,83 +65,112 @@
 
         .envelope-scene.fade-out {
             opacity: 0;
-            transform: scale(0.85);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: scale(0.9) translateY(20px);
             pointer-events: none;
             display: none;
         }
 
-        /* ===== SOLID PREMIUM ENVELOPE ===== */
+        /* The Envelope Base Box */
         .envelope {
             position: relative;
-            width: min(440px, 86vw);
-            height: min(280px, 55vw);
-            background: #e5d7c3;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            height: 100%;
+            background: var(--env-base);
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
-        /* Envelope Inner Pocket Background */
+        /* Deep Pocket Background when flap opens */
         .env-inner-pocket {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, #d8c7b0 0%, #ecdcc8 100%);
+            background: linear-gradient(180deg, #bfa88d 0%, #cebba3 100%);
+            border-radius: 0 0 6px 6px;
             z-index: 1;
         }
 
-        /* Side Flaps (Left & Right) */
+        /* Peeking Card Inside before open */
+        .env-card-inside {
+            position: absolute;
+            top: 15%;
+            left: 5%;
+            width: 90%;
+            height: 75%;
+            background: #ffffff;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            z-index: 2;
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .envelope-scene.opened .env-card-inside {
+            transform: translateY(-20px);
+        }
+
+        /* Left Flap */
         .env-side-left {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #e4d5c1 0%, #d8c6b0 100%);
-            clip-path: polygon(0 0, 52% 50%, 0 100%);
-            z-index: 2;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+            background: linear-gradient(135deg, #ebdcc9 0%, #d8c4ad 100%);
+            clip-path: polygon(0 0, 50% 50%, 0 100%);
+            z-index: 3;
+            filter: drop-shadow(2px 0 3px rgba(0,0,0,0.04));
         }
 
+        /* Right Flap */
         .env-side-right {
             position: absolute;
             top: 0;
             right: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(225deg, #dfcfba 0%, #d3c0aa 100%);
-            clip-path: polygon(100% 0, 48% 50%, 100% 100%);
-            z-index: 2;
-            box-shadow: -2px 0 8px rgba(0,0,0,0.04);
+            background: linear-gradient(225deg, #e4d3be 0%, #d0bda5 100%);
+            clip-path: polygon(100% 0, 50% 50%, 100% 100%);
+            z-index: 3;
+            filter: drop-shadow(-2px 0 3px rgba(0,0,0,0.04));
         }
 
-        /* Bottom Solid Flap (Completely Fills Bottom Half) */
+        /* Bottom Solid Triangle Flap */
         .env-bottom {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(0deg, #d3c0a8 0%, #ddccb5 50%, #e6d7c2 100%);
-            clip-path: polygon(0 100%, 50% 46%, 100% 100%);
-            z-index: 3;
-            box-shadow: 0 -3px 12px rgba(0,0,0,0.06);
+            background: linear-gradient(0deg, #cfbba3 0%, #decbb4 50%, #eadccb 100%);
+            clip-path: polygon(0 100%, 50% 48%, 100% 100%);
+            border-radius: 0 0 6px 6px;
+            z-index: 4;
+            filter: drop-shadow(0 -3px 4px rgba(0,0,0,0.05));
         }
 
-        /* Top Opening Flap */
+        /* Top Opening Flap (Hinged at top 0, rotates 180deg upwards) */
         .env-top-flap {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            clip-path: polygon(0 0, 100% 0, 50% 55%);
-            background: linear-gradient(180deg, #f0e3d2 0%, #e8d9c5 55%, #dfceb8 100%);
+            clip-path: polygon(0 0, 100% 0, 50% 53%);
+            background: linear-gradient(180deg, #f5e9d9 0%, #ebdcc8 55%, #dfceb8 100%);
             transform-origin: top center;
             transform: rotateX(0deg);
             transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.6s;
-            z-index: 4;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 5;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
+        }
+
+        /* Flap inside texture when opened upward */
+        .env-top-flap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, #b89f82 0%, #ccb89e 100%);
+            opacity: 0;
+            transition: opacity 0.1s linear 0.6s;
         }
 
         .envelope-scene.opened .env-top-flap {
@@ -152,16 +179,20 @@
             transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
         }
 
+        .envelope-scene.opened .env-top-flap::after {
+            opacity: 1;
+        }
+
         /* Wax Seal */
         .wax-seal {
             position: absolute;
-            top: 54%;
+            top: 52%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 52px;
             height: 52px;
             z-index: 6;
-            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .wax-seal-body {
@@ -175,7 +206,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
         }
 
         .wax-seal-body::before {
@@ -284,7 +314,7 @@
         }
 
         @media (max-width: 480px) {
-            .envelope { width: 88vw; height: 58vw; }
+            .envelope-scene { width: 88vw; height: 58vw; }
             .invitation-card { width: 92vw; }
         }
     </style>
@@ -296,6 +326,7 @@
         <div class="envelope-scene" id="envelope">
             <div class="envelope">
                 <div class="env-inner-pocket"></div>
+                <div class="env-card-inside"></div>
                 <div class="env-side-left"></div>
                 <div class="env-side-right"></div>
                 <div class="env-bottom"></div>
@@ -307,7 +338,7 @@
             <div class="tap-hint">Tap to Open</div>
         </div>
 
-        <!-- Invitation Card (Opens directly in place) -->
+        <!-- Invitation Card (Opens in place) -->
         <div class="card-container" id="cardContainer">
             <div class="invitation-card">
                 <div class="card-frame"></div>
@@ -325,14 +356,14 @@
                 if (opened) return;
                 opened = true;
 
-                // Step 1: Open the flap
+                // Step 1: Open the flap animatedly upwards
                 this.classList.add('opened');
 
-                // Step 2: Show card and hide envelope
+                // Step 2: Show sample open envelope state, then reveal card
                 setTimeout(() => {
                     this.classList.add('fade-out');
                     document.getElementById('cardContainer').classList.add('show');
-                }, 1200);
+                }, 1400);
             });
         })();
     </script>
