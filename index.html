@@ -64,13 +64,13 @@
             box-shadow: 0 20px 45px rgba(0,0,0,0.18);
         }
 
-        /* When opened, envelope glides gently downwards, staying permanently visible underneath the card */
+        /* When opened: Envelope glides downwards, staying visible underneath */
         .invite-wrapper.opened .envelope-box {
             transform: translateY(270px) scale(0.85);
             box-shadow: 0 25px 55px rgba(0,0,0,0.16);
         }
 
-        /* Deep Pocket Interior Background */
+        /* Layer 1: Pocket Background inside */
         .env-pocket-bg {
             position: absolute;
             inset: 0;
@@ -79,10 +79,46 @@
             z-index: 1;
         }
 
-        /* ===== REALISTIC CARD EMERGING DIRECTLY FROM INSIDE ===== */
+        /* Layer 2: Top Opening Flap (Hinged at top, opens 180deg upwards) */
+        .env-flap-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(0 0, 100% 0, 50% 53%);
+            background: linear-gradient(180deg, #f5e9d9 0%, #ebdcc8 55%, #dfceb8 100%);
+            transform-origin: top center;
+            transform: rotateX(0deg);
+            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.45s;
+            z-index: 15; /* Sits on top when closed */
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
+        }
+
+        .env-flap-top::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, #b89f82 0%, #ccb89e 100%);
+            opacity: 0;
+            transition: opacity 0.1s linear 0.45s;
+        }
+
+        /* When flap opens, it flips up and sits behind (z-index: 2) */
+        .invite-wrapper.opened .env-flap-top {
+            transform: rotateX(180deg);
+            z-index: 2;
+            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
+        }
+
+        .invite-wrapper.opened .env-flap-top::after {
+            opacity: 1;
+        }
+
+        /* Layer 3: THE INVITATION CARD (SITS EXACTLY INSIDE THE POCKET) */
         .card-container {
             position: absolute;
-            bottom: 6px;
+            bottom: 12px;
             left: 5%;
             width: 90%;
             max-height: 56vh;
@@ -92,22 +128,21 @@
             overflow: hidden;
             pointer-events: none;
 
-            /* INITIALLY: Tucked fully inside the pocket (behind front folds z:10, in front of back flap z:1) */
-            z-index: 3;
-            opacity: 0;
-            transform: translateY(30px) scale(0.88);
+            /* Sits behind front triangle folds (z:10) and in front of pocket bg (z:1) & open flap (z:2) */
+            z-index: 5;
+
+            /* INITIALLY: Completely deep inside the envelope pocket */
+            transform: translateY(60px) scale(0.92);
             transition: 
-                opacity 0.4s ease 0.35s,
-                transform 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s, 
-                box-shadow 1.4s ease 0.4s,
-                z-index 0s linear 1s;
+                transform 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s, 
+                box-shadow 1.4s ease 0.35s,
+                z-index 0s linear 1.2s;
         }
 
-        /* WHEN OPENED: Pulls upward in front of the top flap, clears the pocket, and grows big into position */
+        /* ON CLICK: Card rises out of the pocket opening, in front of top flap, behind front folds initially */
         .invite-wrapper.opened .card-container {
-            opacity: 1;
-            transform: translateY(-40px) scale(1);
-            z-index: 25; /* Rises in front of the entire envelope! */
+            transform: translateY(-400px) scale(1.18);
+            z-index: 30; /* Once it emerges high up, it can overlay if needed */
             box-shadow: 0 30px 75px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(200, 168, 78, 0.45);
             pointer-events: auto;
         }
@@ -149,7 +184,7 @@
             100% { opacity: 0; transform: translateX(120%); }
         }
 
-        /* ===== ENVELOPE FRONT FOLDS ===== */
+        /* Layer 4: Front Overlapping Folds (CARD SLIDES OUT FROM BEHIND THESE) */
         .env-flap-left {
             position: absolute;
             top: 0;
@@ -187,43 +222,7 @@
             filter: drop-shadow(0 -3px 4px rgba(0,0,0,0.05));
         }
 
-        /* Top Opening Flap (Hinged at top) */
-        .env-flap-top {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            clip-path: polygon(0 0, 100% 0, 50% 53%);
-            background: linear-gradient(180deg, #f5e9d9 0%, #ebdcc8 55%, #dfceb8 100%);
-            transform-origin: top center;
-            transform: rotateX(0deg);
-            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.45s;
-            z-index: 12;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
-        }
-
-        .env-flap-top::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(0deg, #b89f82 0%, #ccb89e 100%);
-            opacity: 0;
-            transition: opacity 0.1s linear 0.45s;
-        }
-
-        /* Once opened: Flap folds upward and moves BEHIND everything (z-index: 1) */
-        .invite-wrapper.opened .env-flap-top {
-            transform: rotateX(180deg);
-            z-index: 1;
-            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
-        }
-
-        .invite-wrapper.opened .env-flap-top::after {
-            opacity: 1;
-        }
-
-        /* ===== WAX SEAL WITH LOGO.PNG ===== */
+        /* Layer 5: WAX SEAL WITH LOGO.PNG */
         .wax-seal {
             position: absolute;
             top: 52%;
@@ -231,7 +230,7 @@
             transform: translate(-50%, -50%);
             width: 54px;
             height: 54px;
-            z-index: 13;
+            z-index: 20;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -293,9 +292,9 @@
 
         @media (max-width: 480px) {
             .invite-wrapper { width: 88vw; height: 58vw; }
-            .card-container { max-height: 54vh; }
-            .card-container img { max-height: 54vh; }
-            .invite-wrapper.opened .card-container { transform: translateY(-35px) scale(1); }
+            .card-container { max-height: 52vh; }
+            .card-container img { max-height: 52vh; }
+            .invite-wrapper.opened .card-container { transform: translateY(-330px) scale(1.15); }
             .invite-wrapper.opened .envelope-box { transform: translateY(220px) scale(0.85); }
         }
     </style>
@@ -306,27 +305,32 @@
         <!-- Interactive Invitation Component -->
         <div class="invite-wrapper" id="inviteWrapper">
             
-            <!-- Envelope Box (Never hides, stays below) -->
+            <!-- Envelope Box (Holds all envelope parts & the internal card together) -->
             <div class="envelope-box">
+                <!-- Layer 1: Pocket Background -->
                 <div class="env-pocket-bg"></div>
+
+                <!-- Layer 2: Top Opening Flap -->
+                <div class="env-flap-top"></div>
+
+                <!-- Layer 3: REAL CARD NESTLED DIRECTLY INSIDE THE POCKET -->
+                <div class="card-container" id="cardContainer">
+                    <div class="card-frame"></div>
+                    <div class="card-shine"></div>
+                    <img src="INVITATION-CARD.jpeg" alt="GBTA Invitation Card" />
+                </div>
+
+                <!-- Layer 4: Front Triangular Folds (Covers the card while it slides out) -->
                 <div class="env-flap-left"></div>
                 <div class="env-flap-right"></div>
                 <div class="env-flap-bottom"></div>
-                <div class="env-flap-top"></div>
 
-                <!-- Seal with logo.png -->
+                <!-- Layer 5: Seal with logo.png -->
                 <div class="wax-seal">
                     <div class="wax-seal-body">
                         <img src="logo.png" alt="GBTA Logo" />
                     </div>
                 </div>
-            </div>
-
-            <!-- Single Real Card: nestled inside pocket, glides out above the flap into place -->
-            <div class="card-container" id="cardContainer">
-                <div class="card-frame"></div>
-                <div class="card-shine"></div>
-                <img src="INVITATION-CARD.jpeg" alt="GBTA Invitation Card" />
             </div>
 
             <div class="tap-hint">Tap to Open</div>
