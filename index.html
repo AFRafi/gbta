@@ -55,7 +55,7 @@
             background: var(--env-base);
             border-radius: 0 0 8px 8px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.12);
-            transition: transform 1.8s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.4s ease;
+            transition: transform 2.8s cubic-bezier(0.25, 1, 0.35, 1), box-shadow 0.5s ease;
             z-index: 5;
         }
 
@@ -90,7 +90,7 @@
             background: linear-gradient(180deg, #f5e9d9 0%, #ebdcc8 55%, #dfceb8 100%);
             transform-origin: top center;
             transform: rotateX(0deg);
-            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.45s;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0.6s;
             z-index: 15; /* Sits on top when closed */
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
         }
@@ -101,14 +101,14 @@
             inset: 0;
             background: linear-gradient(0deg, #b89f82 0%, #ccb89e 100%);
             opacity: 0;
-            transition: opacity 0.1s linear 0.45s;
+            transition: opacity 0.1s linear 0.6s;
         }
 
         /* When flap opens, it flips up and sits behind (z-index: 2) */
         .invite-wrapper.opened .env-flap-top {
             transform: rotateX(180deg);
             z-index: 2;
-            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s linear 0s;
         }
 
         .invite-wrapper.opened .env-flap-top::after {
@@ -135,10 +135,10 @@
             opacity: 0;
             transform: translateY(30px) scale(0.92);
             transition: 
-                opacity 0.4s ease 0.35s,
-                transform 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s, 
-                box-shadow 1.4s ease 0.35s,
-                z-index 0s linear 1.2s;
+                opacity 0.6s ease 0.5s,
+                transform 2.8s cubic-bezier(0.22, 1, 0.36, 1) 0.5s, 
+                box-shadow 2.4s ease 0.5s,
+                z-index 0s linear 1.8s;
         }
 
         /* ON CLICK: Once flap opens, card becomes visible and smoothly emerges from the pocket */
